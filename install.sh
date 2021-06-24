@@ -8,7 +8,8 @@
 pushd $(dirname $0) > /dev/null
 
 if [ -d "$HOME/.dotfiles" ]; then
-    read -p "~/.dotfiles already exists, override it? [y/N]" yn
+    read -p "~/.dotfiles already exists, override it? [y/N] " -n 1 -r yn
+    echo
     case $yn in
         [Yy]* ) rm -rf $HOME/.dotfiles;;
         * ) exit;;
