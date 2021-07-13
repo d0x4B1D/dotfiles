@@ -16,9 +16,17 @@ if [ -d "$HOME/.dotfiles" ]; then
     esac
 fi
 
-git clone -c core.eol=lf -c core.autocrlf=false --depth 1 https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
-git clone -c core.eol=lf -c core.autocrlf=false --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/zsh/plugins/zsh-syntax-highlighting
-git clone -c core.eol=lf -c core.autocrlf=false --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.dotfiles/zsh/plugins/zsh-autosuggestions
+git_flags="-c core.eol=lf -c core.autocrlf=false --depth 1" 
+
+if [ -z "$1" ]; then
+    git clone $git_flags https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
+else
+    echo "Cloning from branch $1"
+    git clone $git_flags -b $1 https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
+fi
+
+git clone $git_flags https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/zsh/plugins/zsh-syntax-highlighting
+git clone $git_flags https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.dotfiles/zsh/plugins/zsh-autosuggestions
 cp $HOME/.dotfiles/config/zshrc $HOME/.zshrc
 
 popd > /dev/null
