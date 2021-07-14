@@ -25,8 +25,10 @@ else
     git clone $git_flags -b $1 https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
 fi
 
+git clone $git_flags https://github.com/romkatv/powerlevel10k.git $HOME/.dotfiles/zsh/themes/powerlevel10k
 git clone $git_flags https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/zsh/plugins/zsh-syntax-highlighting
 git clone $git_flags https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.dotfiles/zsh/plugins/zsh-autosuggestions
 cp $HOME/.dotfiles/config/zshrc $HOME/.zshrc
+cp $HOME/.dotfiles/zsh/themes/p10k.zsh $HOME/.p10k.zsh
 
 popd > /dev/null
