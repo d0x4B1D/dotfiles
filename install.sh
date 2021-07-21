@@ -11,6 +11,7 @@ pushd $(dirname $0) > /dev/null
 # settings 
 #
 
+dotfile_branch=master
 build_neovim=false
 git_flags="-c core.eol=lf -c core.autocrlf=false --depth 1" 
 
@@ -22,6 +23,8 @@ j=$#
 while [ $i -le $j ]; do
     if [ "$1" == "--include-neovim" ]; then
         build_neovim=true 
+    else 
+        dotfile_branch=$1
     fi
     i=$((i + 1))
     shift 1
@@ -42,17 +45,13 @@ fi
 #####################
 # clone dotfile repo
 #
-if [ -z "$1" ]; then
-    git clone $git_flags https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
-else
-    echo "Cloning from branch $1"
-    git clone $git_flags -b $1 https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
-fi
+echo "Cloning from branch $dotfile_branch"
+git clone $git_flags -b $dotfile_branch https://github.com/d0x4B1D/dotfiles.git $HOME/.dotfiles
 
 #####################
 # clone 3rdParty repos
 #
-if [ "$build_neovim" == true ]; then
+if [ "$build_neovim" == "true" ]; then
     git clone $git_flags https://github.com/neovim/neovim $HOME/.dotfiles/tmp/neovim
 fi
 
@@ -63,18 +62,25 @@ git clone $git_flags https://github.com/zsh-users/zsh-autosuggestions.git $HOME/
 #####################
 # install configs
 #
-ln -s $HOME/.dotfiles/config/zshrc $HOME/.zshrc
-ln -s $HOME/.dotfiles/zsh/themes/p10k.zsh $HOME/.p10k.zsh
+cp $HOME/.dotfiles/config/zshrc $HOME/.zshrc
+mkdir -p $HOME/.config/nvim/ && cp $HOME/.dotfiles/config/nvimrc $HOME/.config/nvim/init.vim
+cp $HOME/.dotfiles/zsh/themes/p10k.zsh $HOME/.p10k.zsh
 
 #####################
-# build neovim
+# build and install neovim
 #
-pushd $HOME/.dotfiles/tmp/neovim > /dev/null
+if [ "$build_neovim" == "true" ]; then
+    pushd $HOME/.dotfiles/tmp/neovim > /dev/null
+    make -j4
+    sudo make install
+    popd > /dev/null
+fi
 
-git checkout stable
-make -j4
-sudo make install
+#####################
+# install vim-plug 
+#
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-popd > /dev/null
 
 popd > /dev/null
